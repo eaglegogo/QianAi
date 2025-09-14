@@ -1,0 +1,43 @@
+stages:
+  - build
+  - deploy
+  - test
+  - rollback
+
+variables:
+  TEST_SERVER: "your.test.server"      # 测试服务器地址
+  DEPLOY_PATH: "/path/to/deploy"      # 代码部署路径
+  BACKUP_PATH: "/path/to/backup"      # 备份路径
+
+build_job:
+  stage: build
+  script:
+    - echo "构建代码"
+    - python setup.py sdist
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "备份当前测试环境"
+    - ssh $TEST_SERVER "cp -r $DEPLOY_PATH $BACKUP_PATH/backup_$(date +%Y%m%d%H%M%S)"
+    - echo "上传新代码包"
+    - scp dist/*.tar.gz $TEST_SERVER:$DEPLOY_PATH/
+    - echo "解压并部署"
+    - ssh $TEST_SERVER "cd $DEPLOY_PATH && tar -xzf *.tar.gz && pip install ."
+  allow_failure: false
+
+test_job:
+  stage: test
+  script:
+    - echo "远程运行自动化测试"
+    - ssh $TEST_SERVER "cd $DEPLOY_PATH && pytest tests/"
+  allow_failure: false
+  needs: [deploy_job]
+
+rollback_job:
+  stage: rollback
+  script:
+    - echo "测试失败，自动回滚"
+    - ssh $TEST_SERVER "rm -rf $DEPLOY_PATH && cp -r $BACKUP_PATH/backup_* $DEPLOY_PATH"
+  when: on_failure
+  needs: [test_job]
