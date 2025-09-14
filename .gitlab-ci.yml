@@ -14,7 +14,6 @@ build_job:
   script:
     - echo "构建代码"
     - python setup.py sdist
-
 deploy_job:
   stage: deploy
   script:
@@ -25,7 +24,6 @@ deploy_job:
     - echo "解压并部署"
     - ssh $TEST_SERVER "cd $DEPLOY_PATH && tar -xzf *.tar.gz && pip install ."
   allow_failure: false
-
 test_job:
   stage: test
   script:
@@ -33,11 +31,71 @@ test_job:
     - ssh $TEST_SERVER "cd $DEPLOY_PATH && pytest tests/"
   allow_failure: false
   needs: [deploy_job]
-
 rollback_job:
   stage: rollback
   script:
     - echo "测试失败，自动回滚"
     - ssh $TEST_SERVER "rm -rf $DEPLOY_PATH && cp -r $BACKUP_PATH/backup_* $DEPLOY_PATH"
+  when: on_failure
+  needs: [test_job]
+stages:
+  - build
+  - docker_build
+  - deploy
+  - test
+  - rollback
+
+variables:
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  TEST_SERVER: "your.test.server"      # 测试服务器地址
+  DEPLOY_PATH: "/path/to/deploy"      # 代码部署路径
+  BACKUP_PATH: "/path/to/backup"      # 备份路径
+
+build_job:
+  stage: build
+  script:
+    - echo "构建代码包"
+    - python setup.py sdist
+
+docker_build_job:
+  stage: docker_build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "构建并推送 Docker 镜像"
+    - docker build -t $DOCKER_IMAGE .
+    - docker push $DOCKER_IMAGE
+  needs: [build_job]
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "备份当前测试环境"
+    - ssh $TEST_SERVER "cp -r $DEPLOY_PATH $BACKUP_PATH/backup_$(date +%Y%m%d%H%M%S)"
+    - echo "上传新代码包"
+    - scp dist/*.tar.gz $TEST_SERVER:$DEPLOY_PATH/
+    - echo "解压并部署"
+    - ssh $TEST_SERVER "cd $DEPLOY_PATH && tar -xzf *.tar.gz && pip install ."
+    - echo "拉取并运行新 Docker 镜像"
+    - ssh $TEST_SERVER "docker pull $DOCKER_IMAGE && docker stop qianai_app || true && docker rm qianai_app || true && docker run -d --name qianai_app -v $DEPLOY_PATH:/app $DOCKER_IMAGE"
+  allow_failure: false
+  needs: [docker_build_job]
+
+test_job:
+  stage: test
+  script:
+    - echo "远程运行自动化测试（物理机）"
+    - ssh $TEST_SERVER "cd $DEPLOY_PATH && pytest tests/"
+    - echo "远程运行自动化测试（Docker 容器）"
+    - ssh $TEST_SERVER "docker exec qianai_app pytest tests/ || true"
+  allow_failure: false
+  needs: [deploy_job]
+
+rollback_job:
+  stage: rollback
+  script:
+    - echo "测试或部署失败，自动回滚"
+    - ssh $TEST_SERVER "docker stop qianai_app || true && docker rm qianai_app || true && rm -rf $DEPLOY_PATH && cp -r $BACKUP_PATH/backup_* $DEPLOY_PATH && docker run -d --name qianai_app -v $DEPLOY_PATH:/app $DOCKER_IMAGE"
   when: on_failure
   needs: [test_job]

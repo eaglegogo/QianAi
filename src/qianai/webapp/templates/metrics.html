@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>DevOps 关键指标展示</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
+        .metrics-box { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ddd; padding: 32px; max-width: 600px; margin: auto; }
+        h2 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="metrics-box">
+        <h2>QianAi DevOps 关键指标</h2>
+        <table>
+            <tr><th>指标</th><th>数值</th></tr>
+            <tr><td>软件打包时间</td><td>{{ metrics.build_time }}（耗时：{{ metrics.build_duration }}）</td></tr>
+            <tr><td>部署时间</td><td>{{ metrics.deploy_time }}（耗时：{{ metrics.deploy_duration }}）</td></tr>
+            <tr><td>部署成功率</td><td>{{ metrics.deploy_success_rate }}</td></tr>
+            <tr><td>测试时间</td><td>{{ metrics.test_time }}（耗时：{{ metrics.test_duration }}）</td></tr>
+            <tr><td>测试用例成功率</td><td>{{ metrics.test_case_pass_rate }}</td></tr>
+        </table>
+    </div>
+</body>
+</html>
