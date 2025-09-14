@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>构建信息</h2>
+<p>展示最近一次构建时间、耗时、状态等信息。</p>
+<ul>
+    <li>构建时间：{{ metrics.build_time }}</li>
+    <li>构建耗时：{{ metrics.build_duration }}</li>
+</ul>
+{% endblock %}

@@ -1,2 +1,4 @@
 # 项目依赖包列表
 flask
+transformers
+psutil

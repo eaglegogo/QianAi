@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>QianAi DevOps 仪表盘</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 32px;">
+  <div style="flex:1; min-width:220px; background:#f0f4f8; border-radius:8px; padding:20px;">
+    <h3>构建</h3>
+    <ul>
+      <li>时间：{{ metrics.build_time }}</li>
+      <li>耗时：{{ metrics.build_duration }}</li>
+    </ul>
+    <a href="/build">详情</a>
+  </div>
+  <div style="flex:1; min-width:220px; background:#f0f4f8; border-radius:8px; padding:20px;">
+    <h3>部署</h3>
+    <ul>
+      <li>时间：{{ metrics.deploy_time }}</li>
+      <li>耗时：{{ metrics.deploy_duration }}</li>
+      <li>成功率：{{ metrics.deploy_success_rate }}</li>
+    </ul>
+    <a href="/deploy">详情</a>
+  </div>
+  <div style="flex:1; min-width:220px; background:#f0f4f8; border-radius:8px; padding:20px;">
+    <h3>测试</h3>
+    <ul>
+      <li>时间：{{ metrics.test_time }}</li>
+      <li>耗时：{{ metrics.test_duration }}</li>
+      <li>用例成功率：{{ metrics.test_case_pass_rate }}</li>
+    </ul>
+    <a href="/test">详情</a>
+  </div>
+  <div style="flex:1; min-width:220px; background:#f0f4f8; border-radius:8px; padding:20px;">
+    <h3>监控</h3>
+    <ul>
+      <li>CPU：{{ monitor.cpu_percent }}</li>
+      <li>内存：{{ monitor.mem_percent }}</li>
+      <li>磁盘：{{ monitor.disk_percent }}</li>
+    </ul>
+    <a href="/monitor">详情</a>
+  </div>
+</div>
+<div style="margin-top:32px;">
+  <h3>AI日志摘要</h3>
+  <div style="background:#f9f9f9; border-radius:6px; padding:16px;">
+    <b>{{ ai_log.summary }}</b>
+    <a href="/ai-log" style="margin-left:16px;">日志详情</a>
+  </div>
+</div>
+{% endblock %}

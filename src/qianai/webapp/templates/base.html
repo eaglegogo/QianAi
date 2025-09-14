@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>QianAi DevOps 系统</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">仪表盘</a> |
+        <a href="/build">构建</a> |
+        <a href="/deploy">部署</a> |
+        <a href="/test">测试</a> |
+        <a href="/ai-log">日志分析</a> |
+        <a href="/monitor">监控</a>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

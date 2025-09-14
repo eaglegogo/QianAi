@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>测试信息</h2>
+<p>展示最近一次测试时间、耗时、用例成功率等信息。</p>
+<ul>
+    <li>测试时间：{{ metrics.test_time }}</li>
+    <li>测试耗时：{{ metrics.test_duration }}</li>
+    <li>测试用例成功率：{{ metrics.test_case_pass_rate }}</li>
+</ul>
+{% endblock %}

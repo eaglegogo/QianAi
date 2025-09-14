@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>部署信息</h2>
+<p>展示最近一次部署时间、耗时、成功率等信息。</p>
+<ul>
+    <li>部署时间：{{ metrics.deploy_time }}</li>
+    <li>部署耗时：{{ metrics.deploy_duration }}</li>
+    <li>部署成功率：{{ metrics.deploy_success_rate }}</li>
+</ul>
+{% endblock %}

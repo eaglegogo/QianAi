@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI日志分析</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
+        .box { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ddd; padding: 32px; max-width: 700px; margin: auto; }
+        h2 { color: #2c3e50; }
+        .summary { font-size: 1.1em; color: #2980b9; margin-bottom: 20px; }
+        .error-list { color: #c0392b; }
+        pre { background: #f0f0f0; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>AI日志摘要</h2>
+        <div class="summary">{{ summary }}</div>
+        <h3>错误详情</h3>
+        {% if errors %}
+            <div class="error-list">
+                {% for err in errors %}
+                    <pre>{{ err }}</pre>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div>无明显错误。</div>
+        {% endif %}
+    </div>
+</body>
+</html>

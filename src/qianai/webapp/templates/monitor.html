@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>系统监控</h2>
+<ul>
+    <li>CPU使用率：{{ monitor.cpu_percent }}</li>
+    <li>内存使用率：{{ monitor.mem_percent }}</li>
+    <li>磁盘使用率：{{ monitor.disk_percent }}</li>
+</ul>
+{% if alerts %}
+    <div style="color: #c0392b; font-weight: bold;">告警：<br>{{ alerts|join('<br>')|safe }}</div>
+{% else %}
+    <div style="color: #27ae60;">系统状态正常</div>
+{% endif %}
+{% endblock %}
